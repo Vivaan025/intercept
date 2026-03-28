@@ -1,13 +1,14 @@
 #include "interception.h"
 #include "../math/angle.h"
 #include <cmath>
-
-static float prevAngle = 0.0f;
+#include "../physics/motion.h"
 
 void updateInterception(Drone& drone, Missile& missile) {
 
     // float velX = drone.x - drone.prevX;
     // float velY = drone.y - drone.prevY;
+
+    //TARGET ANGLE ------------------------------------------------------
     float dy = drone.y - missile.y;
     float dx = drone.x - missile.x;
     float currentAngle = missile.angle;
@@ -24,6 +25,7 @@ void updateInterception(Drone& drone, Missile& missile) {
     // float dirX = futureX - missile.x;
     // float dirY = futureY - missile.y;
 
+    //TURNING ------------------------------------------------------
     float gain = 3.0f;
 
     float turn = gain * angleDiff;
@@ -35,8 +37,15 @@ void updateInterception(Drone& drone, Missile& missile) {
 
     missile.angle += turn;
 
-    missile.velX = cos(missile.angle) * missile.speed;
-    missile.velY = sin(missile.angle) * missile.speed;
+
+    //PHYSICS ------------------------------------------------------
+    applyPhysics(missile);
+
+    //MOVEMENT ------------------------------------------------------
+
+    //NOW HANDLES IN PHYSICS > motion.cpp
+    // missile.velX = cos(missile.angle) * missile.speed;
+    // missile.velY = sin(missile.angle) * missile.speed;
 
     // float length = sqrt(dirX * dirX + dirY * dirY);
 
@@ -45,6 +54,7 @@ void updateInterception(Drone& drone, Missile& missile) {
     //     dirY /= length;
     // }
 
-    missile.x += missile.velX;
-    missile.y += missile.velY;
+    // missile.x += missile.velX;
+    // missile.y += missile.velY;
+
 }
