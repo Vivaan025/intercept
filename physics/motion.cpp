@@ -18,8 +18,6 @@ void applyPhysics(Missile& missile) {
     missile.velX *= drag;
     missile.velY *= drag;
 
-    // float speed = sqrt(missile.velX * missile.velX + missile.velY * missile.velY);
-
     missile.x += missile.velX;
     missile.y += missile.velY;
 

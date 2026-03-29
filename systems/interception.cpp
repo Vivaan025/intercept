@@ -35,7 +35,28 @@ void updateInterception(Drone& drone, Missile& missile) {
     if(turn > maxTurn) turn = maxTurn;
     if(turn < -maxTurn) turn = -maxTurn;
 
-    missile.angle += turn;
+    // missile.angle += turn;
+
+    //angular accleration
+    float angularAccel = gain * angleDiff; 
+
+    float maxAngularAccel = 0.002f;
+    if(angularAccel > maxAngularAccel) angularAccel = maxAngularAccel;
+    if(angularAccel < -maxAngularAccel) angularAccel = -maxAngularAccel;
+
+    missile.angularVel += angularAccel;
+
+    float angularDrag = 0.98f;
+    missile.angularVel *= angularDrag;
+
+    float maxAngularVel = 0.05f;
+    if(missile.angularVel > maxAngularVel) missile.angularVel = maxAngularVel;
+    if(missile.angularVel < -maxAngularVel) missile.angularVel = -maxAngularVel;
+
+    missile.angle += missile.angularVel;
+
+    
+
 
 
     //PHYSICS ------------------------------------------------------
