@@ -227,8 +227,8 @@ int main() {
         drone.update(time);
         updateInterception(drone, missile);
 
-        drawObject(drone.x, drone.y);
-        drawObject(missile.x, missile.y);
+        drawObject(drone.x, drone.y, 0.2f, 0.8f, 0.3f);
+        drawObject(missile.x, missile.y, 1.0f, 0.0f, 0.0f);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
