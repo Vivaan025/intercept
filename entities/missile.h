@@ -17,6 +17,9 @@ struct Missile {
     //This would make the interception more realistic, as missiles typically have a limited turning rate.
     float angularVel;
 
+    float prevError;
+    float integralError;
+
 
     //destroy missile
     bool active = true;

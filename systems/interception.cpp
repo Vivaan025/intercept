@@ -1,6 +1,7 @@
 #include "interception.h"
 #include "../math/angle.h"
 #include <cmath>
+#include <iostream>
 #include "../physics/motion.h"
 
 void updateInterception(Drone& drone, Missile& missile) {
@@ -26,19 +27,50 @@ void updateInterception(Drone& drone, Missile& missile) {
     // float dirY = futureY - missile.y;
 
     //TURNING ------------------------------------------------------
-    float gain = 3.0f;
+    // float gain = 3.0f;
 
-    float turn = gain * angleDiff;
+    // float turn = gain * angleDiff;
 
-    float maxTurn = 0.03f;
+    // float maxTurn = 0.03f;
 
-    if(turn > maxTurn) turn = maxTurn;
-    if(turn < -maxTurn) turn = -maxTurn;
+    // if(turn > maxTurn) turn = maxTurn;
+    // if(turn < -maxTurn) turn = -maxTurn;
+
+    //PID -------------------------------------------------------------
+    float kp = 3.0f; // Proportional gain
+    float kd = 2.0f; // Derivative gain
+    float ki = 0.001f; // Integral gain
+
+    float error = angleDifference(targetAngle, missile.angle);
+
+    //Derivative term
+    float derivative = error - missile.prevError;
+
+    //Integral term
+    missile.integralError += error;
+
+    float maxIntegral = 5.0f;
+
+    if (missile.integralError > maxIntegral)
+        missile.integralError = maxIntegral;
+
+    if (missile.integralError < -maxIntegral)
+        missile.integralError = -maxIntegral;
+
+    //PID output
+    float angularAccel = kp * error + kd * derivative + ki * missile.integralError;
+    std::cout << "Error: " << error
+              << " Derivative: " << derivative
+              << " Integral: " << missile.integralError
+              << " Angular Accel: " << angularAccel << std::endl;
+
+    // Update previous error for next iteration
+    missile.prevError = error;
 
     // missile.angle += turn;
 
     //angular accleration
-    float angularAccel = gain * angleDiff; 
+    // float angularAccel = gain * angleDiff; 
 
     float maxAngularAccel = 0.002f;
     if(angularAccel > maxAngularAccel) angularAccel = maxAngularAccel;
