@@ -5,14 +5,26 @@
 #include "../physics/motion.h"
 
 void updateInterception(Drone& drone, Missile& missile) {
+    
+    //VELOCITY (change in position)
+    float velX = drone.x - drone.prevX;
+    float velY = drone.y - drone.prevY;
 
-    // float velX = drone.x - drone.prevX;
-    // float velY = drone.y - drone.prevY;
+    //current distance between missile and drone
+    float dx0 = drone.x - missile.x;
+    float dy0 = drone.y - missile.y;
+    float distance = sqrt(dx0 * dx0 + dy0 * dy0);
+
+    float t = distance / missile.speed;
+    if(t > 50.0f) t = 50.0f; // Limit prediction time to prevent overshooting
+
+    float futureX = drone.x + velX * t;
+    float futureY = drone.y + velY * t;
 
     //TARGET ANGLE ------------------------------------------------------
-    float dy = drone.y - missile.y;
-    float dx = drone.x - missile.x;
-    float currentAngle = missile.angle;
+    float dx = futureX - missile.x;
+    float dy = futureY - missile.y;
+    // float currentAngle = missile.angle;
 
     float targetAngle = atan2(dy, dx);
 
@@ -37,9 +49,9 @@ void updateInterception(Drone& drone, Missile& missile) {
     // if(turn < -maxTurn) turn = -maxTurn;
 
     //PID -------------------------------------------------------------
-    float kp = 3.0f; // Proportional gain
-    float kd = 2.0f; // Derivative gain
-    float ki = 0.001f; // Integral gain
+    float kp = 4.5f; // Proportional gain
+    float kd = 2.5f; // Derivative gain
+    float ki = 0.0f; // Integral gain
 
     float error = angleDifference(targetAngle, missile.angle);
 
