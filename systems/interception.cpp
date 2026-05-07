@@ -15,11 +15,20 @@ void updateInterception(Drone& drone, Missile& missile) {
     float dy0 = drone.y - missile.y;
     float distance = sqrt(dx0 * dx0 + dy0 * dy0);
 
-    float t = distance / missile.speed;
-    if(t > 50.0f) t = 50.0f; // Limit prediction time to prevent overshooting
+    float missileSpeed =
+    sqrt(missile.velX * missile.velX +
+         missile.velY * missile.velY);
+
+    float t = distance / (missileSpeed * 10.0f);
+    // if(t < 1.0f) t = 1.0f; // Ensure prediction time is non-negative
+    if(t > 5.0f) t = 5.0f; // Limit prediction time to prevent overshooting
 
     float futureX = drone.x + velX * t;
     float futureY = drone.y + velY * t;
+
+    std::cout << "t: " << t 
+          << " futureX: " << futureX 
+          << " futureY: " << futureY << std::endl;
 
     //TARGET ANGLE ------------------------------------------------------
     float dx = futureX - missile.x;
@@ -49,8 +58,8 @@ void updateInterception(Drone& drone, Missile& missile) {
     // if(turn < -maxTurn) turn = -maxTurn;
 
     //PID -------------------------------------------------------------
-    float kp = 4.5f; // Proportional gain
-    float kd = 2.5f; // Derivative gain
+    float kp = 3.0f; // Proportional gain
+    float kd = 2.0f; // Derivative gain
     float ki = 0.0f; // Integral gain
 
     float error = angleDifference(targetAngle, missile.angle);
@@ -84,7 +93,7 @@ void updateInterception(Drone& drone, Missile& missile) {
     //angular accleration
     // float angularAccel = gain * angleDiff; 
 
-    float maxAngularAccel = 0.002f;
+    float maxAngularAccel = 0.01f;
     if(angularAccel > maxAngularAccel) angularAccel = maxAngularAccel;
     if(angularAccel < -maxAngularAccel) angularAccel = -maxAngularAccel;
 
@@ -93,7 +102,7 @@ void updateInterception(Drone& drone, Missile& missile) {
     float angularDrag = 0.98f;
     missile.angularVel *= angularDrag;
 
-    float maxAngularVel = 0.05f;
+    float maxAngularVel = 0.08f;
     if(missile.angularVel > maxAngularVel) missile.angularVel = maxAngularVel;
     if(missile.angularVel < -maxAngularVel) missile.angularVel = -maxAngularVel;
 
