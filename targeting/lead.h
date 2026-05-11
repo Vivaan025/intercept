@@ -3,10 +3,14 @@
 #include "../entities/drone.h"
 #include "../entities/missile.h"
 
-void computeLeadPosition(
-    Drone& drone,
-    Missile& missile,
+struct LeadData
+{
+    float futureX;
+    float futureY;
+    float targetAngle;
+};
 
-    float& futureX,
-    float& futureY
+LeadData computeLeadPosition(
+    Drone& drone,
+    Missile& missile
 );

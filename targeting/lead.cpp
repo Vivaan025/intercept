@@ -1,20 +1,19 @@
 #include "lead.h"
 #include <cmath>
 
-void computeLead(
+LeadData computeLeadPosition(
     Drone& drone,
-    Missile& missile,
-    float& futureX,
-    float& futureY
+    Missile& missile
 ) {
+    LeadData leadData;
 
     float velX = drone.x - drone.prevX;
     float velY = drone.y - drone.prevY;
 
-    float dx = drone.x - missile.x;
-    float dy = drone.y - missile.y;
+    float dx0 = drone.x - missile.x;
+    float dy0 = drone.y - missile.y;
 
-    float distance = sqrt(dx * dx + dy * dy);
+    float distance = sqrt(dx0 * dx0 + dy0 * dy0);
 
     float missileSpeed =
         sqrt(missile.velX * missile.velX +
@@ -25,6 +24,13 @@ void computeLead(
     if(t > 5.0f)
         t = 5.0f;
 
-    futureX = drone.x + velX * t;
-    futureY = drone.y + velY * t;
+    leadData.futureX = drone.x + velX * t;
+    leadData.futureY = drone.y + velY * t;
+
+    float dy = leadData.futureY - missile.y;
+    float dx = leadData.futureX - missile.x;
+    
+    leadData.targetAngle = atan2(dy, dx);
+
+    return leadData;
 }

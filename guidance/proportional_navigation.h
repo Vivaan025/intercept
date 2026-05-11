@@ -2,8 +2,8 @@
 
 #include "../entities/missile.h"
 
-float computePN(
-    Missile& missile,
-    float targetX,
-    float targetY
+float proportionalNavigation(
+    float missileSpeed,
+    float losRate,
+    float navigationConstant
 );

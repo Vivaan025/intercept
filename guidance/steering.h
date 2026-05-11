@@ -4,5 +4,5 @@
 
 void applySteering(
     Missile& missile,
-    float turnCommand
+    float angularAcceleration
 );
