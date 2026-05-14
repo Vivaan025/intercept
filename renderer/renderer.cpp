@@ -6,7 +6,7 @@
 #include <iostream>
 
 // shaders
-const char* vertexShaderSource = R"(
+const char *vertexShaderSource = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
 
@@ -17,7 +17,7 @@ void main() {
 }
 )";
 
-const char* fragmentShaderSource = R"(
+const char *fragmentShaderSource = R"(
 #version 330 core
 out vec4 FragColor;
 
@@ -29,11 +29,13 @@ void main() {
 )";
 
 unsigned int VAO, VBO;
+unsigned int trailVAO, trailVBO;
 unsigned int shaderProgram;
 int offsetLoc;
 int colorLoc;
 
-void initRenderer() {
+void initRenderer()
+{
 
     // compile shaders
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -53,7 +55,7 @@ void initRenderer() {
     glDeleteShader(fragmentShader);
 
     offsetLoc = glGetUniformLocation(shaderProgram, "offset");
-    colorLoc  = glGetUniformLocation(shaderProgram, "color");
+    colorLoc = glGetUniformLocation(shaderProgram, "color");
 
     if (colorLoc == -1)
         std::cout << "color uniform not found!\n";
@@ -69,7 +71,8 @@ void initRenderer() {
     vertices.push_back(0.0f);
     vertices.push_back(0.0f);
     vertices.push_back(0.0f);
-    for (int i = 0; i <= segments; i++) {
+    for (int i = 0; i <= segments; i++)
+    {
         float angle = 2.0f * M_PI * i / segments;
         float x = radius * cos(angle);
         float y = radius * sin(angle);
@@ -87,13 +90,23 @@ void initRenderer() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glGenVertexArrays(1, &trailVAO);
+    glGenBuffers(1, &trailVBO);
+
+    glBindVertexArray(trailVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, trailVBO);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
     offsetLoc = glGetUniformLocation(shaderProgram, "offset");
 }
 
-void drawObject(float x, float y, float colorR, float colorG, float colorB) {
+void drawObject(float x, float y, float colorR, float colorG, float colorB)
+{
     glUseProgram(shaderProgram);
     glUniform2f(offsetLoc, x, y);
 
@@ -102,4 +115,29 @@ void drawObject(float x, float y, float colorR, float colorG, float colorB) {
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 102);
+}
+
+void drawTrail(const std::vector<TrailPoint> &trail, float colorR, float colorG, float colorB)
+{
+    if (trail.size() < 2)
+        return;
+
+    std::vector<float> vertices;
+    vertices.reserve(trail.size() * 3);
+
+    for (const auto &point : trail)
+    {
+        vertices.push_back(point.x);
+        vertices.push_back(point.y);
+        vertices.push_back(0.0f);
+    }
+
+    glUseProgram(shaderProgram);
+    glUniform2f(offsetLoc, 0.0f, 0.0f);
+    glUniform3f(colorLoc, colorR, colorG, colorB);
+
+    glBindVertexArray(trailVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, trailVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_LINE_STRIP, 0, static_cast<GLsizei>(trail.size()));
 }

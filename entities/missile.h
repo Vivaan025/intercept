@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+
+#include "trail_point.h"
+
 struct Missile
 {
     float x, y;
@@ -25,4 +29,6 @@ struct Missile
 
     // destroy missile
     bool active = true;
+
+    std::vector<TrailPoint> trail;
 };

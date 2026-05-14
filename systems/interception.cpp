@@ -50,7 +50,8 @@ void updateInterception(Drone &drone, Missile &missile)
     //============================
     // Collision Check
     //============================
-    if (checkCollision(drone, missile)) {
+    if (checkCollision(drone, missile))
+    {
         missile.active = false;
         drone.active = false;
         std::cout << "Collision Detected!" << std::endl;
@@ -61,7 +62,6 @@ void updateInterception(Drone &drone, Missile &missile)
               << " Missile Angle: " << missile.angle
               << " Target Angle: " << leadData.targetAngle
               << std::endl;
-
 }
 
 // void updateInterception(Drone &drone, Missile &missile)

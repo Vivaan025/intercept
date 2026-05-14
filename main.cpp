@@ -231,6 +231,21 @@ int main()
 
         drone1.update(time);
 
+        missile.trail.push_back({missile.x, missile.y});
+        if (missile.trail.size() > 200)
+        {
+            missile.trail.erase(missile.trail.begin());
+        }
+
+        drone1.trail.push_back({drone1.x, drone1.y});
+        if (drone1.trail.size() > 200)
+        {
+            drone1.trail.erase(drone1.trail.begin());
+        }
+
+        drawTrail(drone1.trail, 0.2f, 0.8f, 0.3f);
+        drawTrail(missile.trail, 1.0f, 0.0f, 0.0f);
+
         if (drone1.active)
         {
             drawObject(drone1.x, drone1.y, 0.2f, 0.8f, 0.3f);
