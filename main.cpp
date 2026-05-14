@@ -89,7 +89,6 @@
 //     float missileX = -0.5f;
 //     float missileY = -0.5f;
 
-
 //     unsigned int missileVAO, missileVBO;
 
 //     glGenVertexArrays(1, &missileVAO);
@@ -117,13 +116,12 @@
 
 //     float posX = 0.0f;
 //     int offsetLoc = glGetUniformLocation(shaderProgram, "offset");
-  
 
 //     // Render loop
 //     while (!glfwWindowShouldClose(window)) {
 //         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 //         glClear(GL_COLOR_BUFFER_BIT);
-        
+
 //         posX += 0.001f;
 //         if (posX > 1.0f || posX < -1.0f)
 //         posX = -posX;
@@ -137,7 +135,7 @@
 //         droneY = 0.5f * sin(time);
 
 //         float velX = droneX - prevDroneX;
-//         float velY = droneY - prevDroneY;   
+//         float velY = droneY - prevDroneY;
 
 //         float t = 20.0f;
 //         float futureDroneX = droneX + velX * t;
@@ -188,16 +186,20 @@
 #include "systems/interception.h"
 #include "renderer/renderer.h"
 
-int main() {
+int main()
+{
 
-    if (!glfwInit()) return -1;
+    if (!glfwInit())
+        return -1;
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Sim", NULL, NULL);
-    if (!window) return -1;
+    GLFWwindow *window = glfwCreateWindow(800, 600, "Sim", NULL, NULL);
+    if (!window)
+        return -1;
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::cout << "GLAD failed\n";
         return -1;
     }
@@ -206,29 +208,37 @@ int main() {
 
     initRenderer();
 
-    Drone drone;
+    Drone drone1;
     Missile missile;
 
-    drone.x = 0.5f;
-    drone.y = 0.0f;
+    drone1.x = 0.5f;
+    drone1.y = 0.0f;
 
     missile.x = -0.5f;
     missile.y = -0.5f;
     missile.speed = 0.003f;
     missile.angle = 0.0f;
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window))
+    {
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         float time = glfwGetTime();
 
-        drone.update(time);
-        updateInterception(drone, missile);
+        updateInterception(drone1, missile);
 
-        drawObject(drone.x, drone.y, 0.2f, 0.8f, 0.3f);
-        drawObject(missile.x, missile.y, 1.0f, 0.0f, 0.0f);
+        drone1.update(time);
+
+        if (drone1.active)
+        {
+            drawObject(drone1.x, drone1.y, 0.2f, 0.8f, 0.3f);
+        }
+        if (missile.active)
+        {
+            drawObject(missile.x, missile.y, 1.0f, 0.0f, 0.0f);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

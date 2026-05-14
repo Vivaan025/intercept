@@ -1,7 +1,11 @@
 #include "drone.h"
 #include <cmath>
 
-void Drone::update(float time) {
+void Drone::update(float time)
+{
+    if (!active)
+        return;
+
     prevX = x;
     prevY = y;
 

@@ -10,11 +10,15 @@
 
 #include "../math/angle.h"
 #include "../physics/motion.h"
+#include "../physics/collision.h"
 
 #include <iostream>
 
 void updateInterception(Drone &drone, Missile &missile)
 {
+    if (!missile.active)
+        return;
+
     //============================
     // Target Prediction
     //============================
@@ -42,6 +46,15 @@ void updateInterception(Drone &drone, Missile &missile)
     // Physics Update
     //============================
     applyPhysics(missile);
+
+    //============================
+    // Collision Check
+    //============================
+    if (checkCollision(drone, missile)) {
+        missile.active = false;
+        drone.active = false;
+        std::cout << "Collision Detected!" << std::endl;
+    }
 
     std::cout << "Error: " << error
               << " PID Output: " << pidOutput
